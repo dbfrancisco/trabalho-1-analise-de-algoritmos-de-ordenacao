@@ -1,6 +1,6 @@
-package ordem.aleatoria;
+package ordem.inversa;
 
-public class QuickSortTodosTamanhosInverso {
+public class SelectionSortTodosTamanhosInverso {
 
     public static void main(String[] args) {
         // Tamanhos dos vetores que você vai testar
@@ -15,9 +15,9 @@ public class QuickSortTodosTamanhosInverso {
             for (int i = 0; i < repeticoes; i++) {
                 int[] vetor = gerarVetorInverso(tamanho);
 
-                // Medindo o tempo do QuickSort
+                // Medindo o tempo do SelectionSort
                 long inicio = System.nanoTime();
-                quickSort(vetor, 0, vetor.length - 1);
+                selectionSort(vetor);
                 long fim = System.nanoTime();
 
                 tempos[i] = fim - inicio;
@@ -33,38 +33,23 @@ public class QuickSortTodosTamanhosInverso {
         }
     }
 
-    public static void quickSort(int[] vetor, int low, int high) {
-        if (low < high) {
-            // Escolhendo um pivô aleatório
-            int pi = partition(vetor, low, high);
-            quickSort(vetor, low, pi - 1);
-            quickSort(vetor, pi + 1, high);
-        }
-    }
+    // Função SelectionSort
+    public static void selectionSort(int[] vetor) {
+        int n = vetor.length;
 
-    private static int partition(int[] vetor, int low, int high) {
-        // Escolher um pivô aleatório para evitar o pior caso
-        int randomIndex = low + (int)(Math.random() * (high - low + 1));
-        int pivot = vetor[randomIndex];
-
-        // Troca o pivô aleatório com o último elemento
-        int temp = vetor[randomIndex];
-        vetor[randomIndex] = vetor[high];
-        vetor[high] = temp;
-
-        int i = (low - 1);
-        for (int j = low; j < high; j++) {
-            if (vetor[j] < pivot) {
-                i++;
-                temp = vetor[i];
-                vetor[i] = vetor[j];
-                vetor[j] = temp;
+        for (int i = 0; i < n - 1; i++) {
+            int indiceMinimo = i;
+            for (int j = i + 1; j < n; j++) {
+                if (vetor[j] < vetor[indiceMinimo]) {
+                    indiceMinimo = j;
+                }
             }
+
+            // Troca o valor mínimo encontrado com o valor na posição i
+            int temp = vetor[i];
+            vetor[i] = vetor[indiceMinimo];
+            vetor[indiceMinimo] = temp;
         }
-        temp = vetor[i + 1];
-        vetor[i + 1] = vetor[high];
-        vetor[high] = temp;
-        return i + 1;
     }
 
     // Gera vetor em ordem inversa
@@ -92,4 +77,3 @@ public class QuickSortTodosTamanhosInverso {
         return Math.sqrt(soma / tempos.length);
     }
 }
-

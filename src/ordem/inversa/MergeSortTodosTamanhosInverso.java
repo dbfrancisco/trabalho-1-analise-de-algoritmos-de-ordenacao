@@ -1,6 +1,6 @@
-package ordem.aleatoria;
+package ordem.inversa;
 
-public class SelectionSortTodosTamanhosInverso {
+public class MergeSortTodosTamanhosInverso {
 
     public static void main(String[] args) {
         // Tamanhos dos vetores que você vai testar
@@ -15,9 +15,9 @@ public class SelectionSortTodosTamanhosInverso {
             for (int i = 0; i < repeticoes; i++) {
                 int[] vetor = gerarVetorInverso(tamanho);
 
-                // Medindo o tempo do SelectionSort
+                // Medindo o tempo do MergeSort
                 long inicio = System.nanoTime();
-                selectionSort(vetor);
+                mergeSort(vetor);
                 long fim = System.nanoTime();
 
                 tempos[i] = fim - inicio;
@@ -33,22 +33,52 @@ public class SelectionSortTodosTamanhosInverso {
         }
     }
 
-    // Função SelectionSort
-    public static void selectionSort(int[] vetor) {
-        int n = vetor.length;
+    public static void mergeSort(int[] vetor) {
+        if (vetor.length > 1) {
+            // Encontrando o ponto médio do vetor
+            int meio = vetor.length / 2;
+            int[] esquerda = new int[meio];
+            int[] direita;
 
-        for (int i = 0; i < n - 1; i++) {
-            int indiceMinimo = i;
-            for (int j = i + 1; j < n; j++) {
-                if (vetor[j] < vetor[indiceMinimo]) {
-                    indiceMinimo = j;
-                }
+            if (vetor.length % 2 == 0) {
+                direita = new int[meio];
+            } else {
+                direita = new int[meio + 1];
             }
 
-            // Troca o valor mínimo encontrado com o valor na posição i
-            int temp = vetor[i];
-            vetor[i] = vetor[indiceMinimo];
-            vetor[indiceMinimo] = temp;
+            // Copiando os elementos para os vetores temporários
+            System.arraycopy(vetor, 0, esquerda, 0, meio);
+            System.arraycopy(vetor, meio, direita, 0, vetor.length - meio);
+
+            // Recursivamente ordena os dois subvetores
+            mergeSort(esquerda);
+            mergeSort(direita);
+
+            // Mescla os subvetores ordenados
+            merge(vetor, esquerda, direita);
+        }
+    }
+
+    public static void merge(int[] vetor, int[] esquerda, int[] direita) {
+        int i = 0, j = 0, k = 0;
+
+        // Ordena e mescla os elementos de esquerda e direita
+        while (i < esquerda.length && j < direita.length) {
+            if (esquerda[i] <= direita[j]) {
+                vetor[k++] = esquerda[i++];
+            } else {
+                vetor[k++] = direita[j++];
+            }
+        }
+
+        // Copia os elementos restantes de esquerda, se houver
+        while (i < esquerda.length) {
+            vetor[k++] = esquerda[i++];
+        }
+
+        // Copia os elementos restantes de direita, se houver
+        while (j < direita.length) {
+            vetor[k++] = direita[j++];
         }
     }
 

@@ -1,6 +1,6 @@
-package ordem.aleatoria;
+package ordem.inversa;
 
-public class MergeSortTodosTamanhosInverso {
+public class HeapSortTodosTamanhosInverso {
 
     public static void main(String[] args) {
         // Tamanhos dos vetores que você vai testar
@@ -15,9 +15,9 @@ public class MergeSortTodosTamanhosInverso {
             for (int i = 0; i < repeticoes; i++) {
                 int[] vetor = gerarVetorInverso(tamanho);
 
-                // Medindo o tempo do MergeSort
+                // Medindo o tempo do HeapSort
                 long inicio = System.nanoTime();
-                mergeSort(vetor);
+                heapSort(vetor);
                 long fim = System.nanoTime();
 
                 tempos[i] = fim - inicio;
@@ -33,52 +33,51 @@ public class MergeSortTodosTamanhosInverso {
         }
     }
 
-    public static void mergeSort(int[] vetor) {
-        if (vetor.length > 1) {
-            // Encontrando o ponto médio do vetor
-            int meio = vetor.length / 2;
-            int[] esquerda = new int[meio];
-            int[] direita;
+    // Função HeapSort
+    public static void heapSort(int[] vetor) {
+        int n = vetor.length;
 
-            if (vetor.length % 2 == 0) {
-                direita = new int[meio];
-            } else {
-                direita = new int[meio + 1];
-            }
+        // Criar um heap (rearranjo do vetor)
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(vetor, n, i);
+        }
 
-            // Copiando os elementos para os vetores temporários
-            System.arraycopy(vetor, 0, esquerda, 0, meio);
-            System.arraycopy(vetor, meio, direita, 0, vetor.length - meio);
+        // Extrair elementos do heap um por um
+        for (int i = n - 1; i >= 0; i--) {
+            // Troca o root (maior valor) com o último elemento
+            int temp = vetor[0];
+            vetor[0] = vetor[i];
+            vetor[i] = temp;
 
-            // Recursivamente ordena os dois subvetores
-            mergeSort(esquerda);
-            mergeSort(direita);
-
-            // Mescla os subvetores ordenados
-            merge(vetor, esquerda, direita);
+            // Chama heapify no vetor reduzido
+            heapify(vetor, i, 0);
         }
     }
 
-    public static void merge(int[] vetor, int[] esquerda, int[] direita) {
-        int i = 0, j = 0, k = 0;
+    // Função para "heapificar" um subvetor
+    public static void heapify(int[] vetor, int n, int i) {
+        int maior = i;
+        int esquerda = 2 * i + 1;
+        int direita = 2 * i + 2;
 
-        // Ordena e mescla os elementos de esquerda e direita
-        while (i < esquerda.length && j < direita.length) {
-            if (esquerda[i] <= direita[j]) {
-                vetor[k++] = esquerda[i++];
-            } else {
-                vetor[k++] = direita[j++];
-            }
+        // Se o filho esquerdo for maior que o pai
+        if (esquerda < n && vetor[esquerda] > vetor[maior]) {
+            maior = esquerda;
         }
 
-        // Copia os elementos restantes de esquerda, se houver
-        while (i < esquerda.length) {
-            vetor[k++] = esquerda[i++];
+        // Se o filho direito for maior que o maior valor até agora
+        if (direita < n && vetor[direita] > vetor[maior]) {
+            maior = direita;
         }
 
-        // Copia os elementos restantes de direita, se houver
-        while (j < direita.length) {
-            vetor[k++] = direita[j++];
+        // Se o maior não for o nó atual
+        if (maior != i) {
+            int temp = vetor[i];
+            vetor[i] = vetor[maior];
+            vetor[maior] = temp;
+
+            // Recursivamente "heapifica" o subárvore afetado
+            heapify(vetor, n, maior);
         }
     }
 
@@ -107,3 +106,4 @@ public class MergeSortTodosTamanhosInverso {
         return Math.sqrt(soma / tempos.length);
     }
 }
+

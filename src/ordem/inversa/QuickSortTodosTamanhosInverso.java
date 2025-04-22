@@ -1,6 +1,6 @@
-package ordem.aleatoria;
+package ordem.inversa;
 
-public class HeapSortTodosTamanhosInverso {
+public class QuickSortTodosTamanhosInverso {
 
     public static void main(String[] args) {
         // Tamanhos dos vetores que você vai testar
@@ -15,9 +15,9 @@ public class HeapSortTodosTamanhosInverso {
             for (int i = 0; i < repeticoes; i++) {
                 int[] vetor = gerarVetorInverso(tamanho);
 
-                // Medindo o tempo do HeapSort
+                // Medindo o tempo do QuickSort
                 long inicio = System.nanoTime();
-                heapSort(vetor);
+                quickSort(vetor, 0, vetor.length - 1);
                 long fim = System.nanoTime();
 
                 tempos[i] = fim - inicio;
@@ -33,52 +33,38 @@ public class HeapSortTodosTamanhosInverso {
         }
     }
 
-    // Função HeapSort
-    public static void heapSort(int[] vetor) {
-        int n = vetor.length;
-
-        // Criar um heap (rearranjo do vetor)
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(vetor, n, i);
-        }
-
-        // Extrair elementos do heap um por um
-        for (int i = n - 1; i >= 0; i--) {
-            // Troca o root (maior valor) com o último elemento
-            int temp = vetor[0];
-            vetor[0] = vetor[i];
-            vetor[i] = temp;
-
-            // Chama heapify no vetor reduzido
-            heapify(vetor, i, 0);
+    public static void quickSort(int[] vetor, int low, int high) {
+        if (low < high) {
+            // Escolhendo um pivô aleatório
+            int pi = partition(vetor, low, high);
+            quickSort(vetor, low, pi - 1);
+            quickSort(vetor, pi + 1, high);
         }
     }
 
-    // Função para "heapificar" um subvetor
-    public static void heapify(int[] vetor, int n, int i) {
-        int maior = i;
-        int esquerda = 2 * i + 1;
-        int direita = 2 * i + 2;
+    private static int partition(int[] vetor, int low, int high) {
+        // Escolher um pivô aleatório para evitar o pior caso
+        int randomIndex = low + (int)(Math.random() * (high - low + 1));
+        int pivot = vetor[randomIndex];
 
-        // Se o filho esquerdo for maior que o pai
-        if (esquerda < n && vetor[esquerda] > vetor[maior]) {
-            maior = esquerda;
+        // Troca o pivô aleatório com o último elemento
+        int temp = vetor[randomIndex];
+        vetor[randomIndex] = vetor[high];
+        vetor[high] = temp;
+
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (vetor[j] < pivot) {
+                i++;
+                temp = vetor[i];
+                vetor[i] = vetor[j];
+                vetor[j] = temp;
+            }
         }
-
-        // Se o filho direito for maior que o maior valor até agora
-        if (direita < n && vetor[direita] > vetor[maior]) {
-            maior = direita;
-        }
-
-        // Se o maior não for o nó atual
-        if (maior != i) {
-            int temp = vetor[i];
-            vetor[i] = vetor[maior];
-            vetor[maior] = temp;
-
-            // Recursivamente "heapifica" o subárvore afetado
-            heapify(vetor, n, maior);
-        }
+        temp = vetor[i + 1];
+        vetor[i + 1] = vetor[high];
+        vetor[high] = temp;
+        return i + 1;
     }
 
     // Gera vetor em ordem inversa
